@@ -19,6 +19,8 @@ class GameScene: SKScene {
         skyColor = SKColor(red: 113/255, green: 197/255, blue: 207/255, alpha: 1.0)
         self.backgroundColor = skyColor
         
+        
+        
         var birdTexture1 = SKTexture(imageNamed: "Bird1")
         birdTexture1.filteringMode = SKTextureFilteringMode.Nearest
         var birdTexture2 = SKTexture(imageNamed: "Bird2")
@@ -32,6 +34,17 @@ class GameScene: SKScene {
         bird.runAction(flap)
         
         self.addChild(bird)
+        
+        
+        
+        var groundTexture = SKTexture(imageNamed: "Ground")
+        groundTexture.filteringMode = SKTextureFilteringMode.Nearest
+        
+        for var i:CGFloat = 0; i < 2 + self.frame.size.width / (groundTexture.size().width); ++i {
+            var sprite = SKSpriteNode(texture: groundTexture)
+            sprite.position = CGPointMake(i * sprite.size.width, sprite.size.height / 2)
+            self.addChild(sprite)
+        }
     }
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
