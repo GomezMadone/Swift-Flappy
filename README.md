@@ -22,4 +22,7 @@ Step #16 - [Kill the bird](https://github.com/ReyHaynes/SwiftFlappy/commit/0d30e
 Step #17 - [Scoring](https://github.com/ReyHaynes/SwiftFlappy/commit/d27638a)
 
 
+
+Play around with everything. Don't forget to Option+Click anything in xcode you don't understand!
+
 Enjoy!!
