@@ -20,10 +20,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let birdCategory: UInt32 = 1 << 0
     let worldCategory: UInt32 = 1 << 1
     let pipeCategory: UInt32 = 1 << 2
+    let scoreCategory: UInt32 = 1 << 3
     
     var moving = SKNode()
     var canRestart = false
     var pipes = SKNode ()
+    
+    var scoreLabelNode = SKLabelNode()
+    var score = NSInteger()
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
@@ -120,6 +124,17 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         var spawnThenDelayForever = SKAction.repeatActionForever(spawnThenDelay)
         
         self.runAction(spawnThenDelayForever)
+        
+        
+        
+        score = 0
+        scoreLabelNode.fontName = "Open Sans"
+        scoreLabelNode.fontSize = 450
+        scoreLabelNode.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.height / 3)
+        scoreLabelNode.zPosition = -30
+        scoreLabelNode.alpha = 0.2
+        scoreLabelNode.text = "\(score)"
+        self.addChild(scoreLabelNode)
     }
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
@@ -146,7 +161,11 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func didBeginContact (contact: SKPhysicsContact!) {
-        if moving.speed > 0 {
+        if (contact.bodyA.categoryBitMask & scoreCategory) == scoreCategory || (contact.bodyB.categoryBitMask & scoreCategory) == scoreCategory {
+            score++
+            scoreLabelNode.text = "\(score)"
+        }
+        else if moving.speed > 0 {
             moving.speed = 0
             
             bird.physicsBody.collisionBitMask = worldCategory
@@ -186,6 +205,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         canRestart = false
         
         moving.speed = 1
+        
+        score = 0
+        scoreLabelNode.text = "\(score)"
     }
     
     func restartGame() {
@@ -227,6 +249,14 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         pipe2.physicsBody.categoryBitMask = pipeCategory
         pipe2.physicsBody.contactTestBitMask = birdCategory
         pipePair.addChild(pipe2)
+        
+        var contactNode = SKNode()
+        contactNode.position = CGPointMake(pipe1.size.width + bird.size.width / 2, CGRectGetMidY(self.frame))
+        contactNode.physicsBody = SKPhysicsBody(rectangleOfSize: CGSizeMake(pipe1.size.width, self.frame.size.height))
+        contactNode.physicsBody.dynamic = false
+        contactNode.physicsBody.categoryBitMask = scoreCategory
+        contactNode.physicsBody.contactTestBitMask = birdCategory
+        pipePair.addChild(contactNode)
         
         pipePair.runAction(moveAndRemovePipes)
         
