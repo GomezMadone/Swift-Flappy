@@ -11,9 +11,13 @@ import SpriteKit
 class GameScene: SKScene {
     
     var bird = SKSpriteNode()
+    var skyColor = SKColor()
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
+        
+        skyColor = SKColor(red: 113/255, green: 197/255, blue: 207/255, alpha: 1.0)
+        self.backgroundColor = skyColor
         
         var birdTexture1 = SKTexture(imageNamed: "Bird1")
         birdTexture1.filteringMode = SKTextureFilteringMode.Nearest
