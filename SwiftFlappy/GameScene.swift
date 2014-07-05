@@ -16,6 +16,10 @@ class GameScene: SKScene {
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
         
+        self.physicsWorld.gravity = CGVectorMake(0.0, -5.0)
+        
+        
+        
         skyColor = SKColor(red: 113/255, green: 197/255, blue: 207/255, alpha: 1.0)
         self.backgroundColor = skyColor
         
@@ -32,6 +36,10 @@ class GameScene: SKScene {
         bird = SKSpriteNode(texture:birdTexture1)
         bird.position = CGPoint(x: self.frame.size.width / 2.8, y: CGRectGetMidY(self.frame))
         bird.runAction(flap)
+        
+        bird.physicsBody = SKPhysicsBody(circleOfRadius: bird.size.height / 2.0)
+        bird.physicsBody.dynamic = true
+        bird.physicsBody.allowsRotation = false
         
         self.addChild(bird)
         
@@ -50,6 +58,13 @@ class GameScene: SKScene {
             sprite.runAction(moveGroundSpritesForever)
             self.addChild(sprite)
         }
+        
+        var dummyGround = SKNode()
+        dummyGround.position = CGPointMake(0, groundTexture.size().height / 2)
+        dummyGround.physicsBody = SKPhysicsBody(rectangleOfSize: CGSizeMake(self.frame.size.width, groundTexture.size().height))
+        dummyGround.physicsBody.dynamic = false
+        
+        self.addChild(dummyGround)
         
         
         
