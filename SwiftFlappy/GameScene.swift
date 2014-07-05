@@ -134,8 +134,9 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
-        
-        bird.zRotation = self.birdPhysicsRotation(-1, max: 0.5, value: bird.physicsBody.velocity.dy * (bird.physicsBody.velocity.dy < 0 ? 0.003 : 0.001))
+        if moving.speed > 0 {
+            bird.zRotation = self.birdPhysicsRotation(-1, max: 0.5, value: bird.physicsBody.velocity.dy * (bird.physicsBody.velocity.dy < 0 ? 0.003 : 0.001))
+        }
     }
     
     func birdPhysicsRotation (min: CGFloat, max: CGFloat, value: CGFloat) -> CGFloat {
@@ -147,6 +148,13 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     func didBeginContact (contact: SKPhysicsContact!) {
         if moving.speed > 0 {
             moving.speed = 0
+            
+            bird.physicsBody.collisionBitMask = worldCategory
+            
+            var rotateBird = SKAction.rotateByAngle(0.01, duration: 0.003)
+            var stopBird = SKAction.runBlock({ () in self.killBirdSpeed() })
+            var birdSequence = SKAction.sequence([rotateBird, stopBird])
+            bird.runAction(birdSequence)
             
             self.removeActionForKey("flash")
             var wait = SKAction.waitForDuration(0.05)
@@ -162,9 +170,16 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         }
     }
     
+    func killBirdSpeed() {
+        bird.speed = 0
+    }
+    
     func resetScene() {
         bird.position = CGPoint(x: self.frame.size.width / 2.8, y: CGRectGetMidY(self.frame))
         bird.physicsBody.velocity = CGVectorMake(0, 0)
+        bird.physicsBody.collisionBitMask = worldCategory | pipeCategory
+        bird.speed = 1
+        bird.zRotation = 0
         
         pipes.removeAllChildren()
         
