@@ -21,6 +21,10 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     let worldCategory: UInt32 = 1 << 1
     let pipeCategory: UInt32 = 1 << 2
     
+    var moving = SKNode()
+    var canRestart = false
+    var pipes = SKNode ()
+    
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
         
@@ -30,6 +34,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         
         self.setBackgroundSky()
+        self.addChild(moving)
+        moving.addChild(pipes)
         
         
         
@@ -68,7 +74,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             var sprite = SKSpriteNode(texture: groundTexture)
             sprite.position = CGPointMake(i * sprite.size.width, sprite.size.height / 2)
             sprite.runAction(moveGroundSpritesForever)
-            self.addChild(sprite)
+            moving.addChild(sprite)
         }
         
         var dummyGround = SKNode()
@@ -93,7 +99,7 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
             sprite.zPosition = -20
             sprite.position = CGPointMake(i * sprite.size.width, sprite.size.height / 2 + groundTexture.size().height)
             sprite.runAction(moveSkylineSpritesForever)
-            self.addChild(sprite)
+            moving.addChild(sprite)
         }
         
         
@@ -118,9 +124,12 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         /* Called when a touch begins */
-        
-        bird.physicsBody.velocity = CGVectorMake(0, 0)
-        bird.physicsBody.applyImpulse(CGVectorMake(0, 8))
+        if moving.speed > 0 {
+            bird.physicsBody.velocity = CGVectorMake(0, 0)
+            bird.physicsBody.applyImpulse(CGVectorMake(0, 8))
+        } else if (canRestart) {
+            self.resetScene()
+        }
     }
     
     override func update(currentTime: CFTimeInterval) {
@@ -136,15 +145,36 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
     }
     
     func didBeginContact (contact: SKPhysicsContact!) {
-        self.removeActionForKey("flash")
-        var wait = SKAction.waitForDuration(0.05)
-        var turnBackgroundRed = SKAction.runBlock({ () in self.setBackgroundRed() })
-        var turnBackgroundWhite = SKAction.runBlock({ () in self.setBackgroundWhite() })
-        var turnBackgroundSky = SKAction.runBlock({ () in self.setBackgroundSky() })
-        var sequenceOfActions = SKAction.sequence([turnBackgroundRed, wait, turnBackgroundWhite, wait, turnBackgroundSky])
-        var repeatSequence = SKAction.repeatAction(sequenceOfActions, count: 4)
+        if moving.speed > 0 {
+            moving.speed = 0
+            
+            self.removeActionForKey("flash")
+            var wait = SKAction.waitForDuration(0.05)
+            var turnBackgroundRed = SKAction.runBlock({ () in self.setBackgroundRed() })
+            var turnBackgroundWhite = SKAction.runBlock({ () in self.setBackgroundWhite() })
+            var turnBackgroundSky = SKAction.runBlock({ () in self.setBackgroundSky() })
+            var sequenceOfActions = SKAction.sequence([turnBackgroundRed, wait, turnBackgroundWhite, wait, turnBackgroundSky])
+            var repeatSequence = SKAction.repeatAction(sequenceOfActions, count: 4)
+            var canRestartAction = SKAction.runBlock({ () in self.restartGame() })
+            var groupOfActions = SKAction.group([repeatSequence, canRestartAction])
+            
+            self.runAction(groupOfActions, withKey: "flash")
+        }
+    }
+    
+    func resetScene() {
+        bird.position = CGPoint(x: self.frame.size.width / 2.8, y: CGRectGetMidY(self.frame))
+        bird.physicsBody.velocity = CGVectorMake(0, 0)
         
-        self.runAction(repeatSequence, withKey: "flash")
+        pipes.removeAllChildren()
+        
+        canRestart = false
+        
+        moving.speed = 1
+    }
+    
+    func restartGame() {
+        self.canRestart = true
     }
     
     func setBackgroundRed() {
@@ -185,6 +215,6 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         
         pipePair.runAction(moveAndRemovePipes)
         
-        self.addChild(pipePair)
+        pipes.addChild(pipePair)
     }
 }
