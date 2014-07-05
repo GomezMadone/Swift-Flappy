@@ -45,6 +45,18 @@ class GameScene: SKScene {
             sprite.position = CGPointMake(i * sprite.size.width, sprite.size.height / 2)
             self.addChild(sprite)
         }
+        
+        
+        
+        var skylineTexture = SKTexture(imageNamed: "Skyline")
+        skylineTexture.filteringMode = SKTextureFilteringMode.Nearest
+        
+        for var i:CGFloat = 0; i < 2 + self.frame.size.width / (skylineTexture.size().width); ++i {
+            var sprite = SKSpriteNode(texture: skylineTexture)
+            sprite.zPosition = -20
+            sprite.position = CGPointMake(i * sprite.size.width, sprite.size.height / 2 + groundTexture.size().height)
+            self.addChild(sprite)
+        }
     }
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
