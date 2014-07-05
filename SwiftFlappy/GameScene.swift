@@ -12,6 +12,7 @@ class GameScene: SKScene {
     
     var bird = SKSpriteNode()
     var skyColor = SKColor()
+    var verticalPipeGap = 130.0
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
@@ -82,6 +83,38 @@ class GameScene: SKScene {
             sprite.runAction(moveSkylineSpritesForever)
             self.addChild(sprite)
         }
+        
+        
+        
+        var pipeTexture1 = SKTexture(imageNamed: "Pipe1")
+        birdTexture1.filteringMode = SKTextureFilteringMode.Nearest
+        var pipeTexture2 = SKTexture(imageNamed: "Pipe2")
+        birdTexture2.filteringMode = SKTextureFilteringMode.Nearest
+        
+        var pipePair = SKNode()
+        pipePair.position = CGPointMake(self.frame.size.width + pipeTexture1.size().width * 2.0, 0)
+        pipePair.zPosition = -10
+        
+        var height = UInt32(self.frame.height / 3)
+        var y = arc4random() % height
+        
+        var pipe1 = SKSpriteNode(texture: pipeTexture1)
+        pipe1.position = CGPointMake(0.0, CGFloat(y))
+        pipe1.physicsBody = SKPhysicsBody(rectangleOfSize: pipe1.size)
+        pipe1.physicsBody.dynamic = false
+        pipePair.addChild(pipe1)
+        
+        var pipe2 = SKSpriteNode(texture: pipeTexture2)
+        pipe2.position = CGPointMake(0.0, CGFloat(y) + pipe1.size.height + CGFloat(verticalPipeGap))
+        pipe2.physicsBody = SKPhysicsBody(rectangleOfSize: pipe2.size)
+        pipe2.physicsBody.dynamic = false
+        pipePair.addChild(pipe2)
+        
+        var distanceToMove = CGFloat(self.frame.size.width + 2.0 * pipeTexture1.size().width)
+        var movePipes = SKAction.moveByX(-distanceToMove, y: 0.0, duration: NSTimeInterval(0.01 * distanceToMove))
+        pipePair.runAction(movePipes)
+        
+        self.addChild(pipePair)
     }
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
