@@ -13,6 +13,9 @@ class GameScene: SKScene {
     var bird = SKSpriteNode()
     var skyColor = SKColor()
     var verticalPipeGap = 130.0
+    var pipeTexture1 = SKTexture()
+    var pipeTexture2 = SKTexture()
+    var moveAndRemovePipes = SKAction()
     
     override func didMoveToView(view: SKView) {
         /* Setup your scene here */
@@ -86,11 +89,44 @@ class GameScene: SKScene {
         
         
         
-        var pipeTexture1 = SKTexture(imageNamed: "Pipe1")
-        birdTexture1.filteringMode = SKTextureFilteringMode.Nearest
-        var pipeTexture2 = SKTexture(imageNamed: "Pipe2")
-        birdTexture2.filteringMode = SKTextureFilteringMode.Nearest
+        pipeTexture1 = SKTexture(imageNamed: "Pipe1")
+        pipeTexture1.filteringMode = SKTextureFilteringMode.Nearest
+        pipeTexture2 = SKTexture(imageNamed: "Pipe2")
+        pipeTexture2.filteringMode = SKTextureFilteringMode.Nearest
         
+        var distanceToMove = CGFloat(self.frame.size.width + 2.0 * pipeTexture1.size().width)
+        var movePipes = SKAction.moveByX(-distanceToMove, y: 0.0, duration: NSTimeInterval(0.01 * distanceToMove))
+        var removePipes = SKAction.removeFromParent()
+        moveAndRemovePipes = SKAction.sequence([movePipes, removePipes])
+        
+        var spawn = SKAction.runBlock({ () in self.spawnPipes() })
+        var delay = SKAction.waitForDuration(NSTimeInterval(2.0))
+        var spawnThenDelay = SKAction.sequence([spawn, delay])
+        var spawnThenDelayForever = SKAction.repeatActionForever(spawnThenDelay)
+        
+        self.runAction(spawnThenDelayForever)
+    }
+    
+    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+        /* Called when a touch begins */
+        
+        bird.physicsBody.velocity = CGVectorMake(0, 0)
+        bird.physicsBody.applyImpulse(CGVectorMake(0, 8))
+    }
+    
+    override func update(currentTime: CFTimeInterval) {
+        /* Called before each frame is rendered */
+        
+        bird.zRotation = self.birdPhysicsRotation(-1, max: 0.5, value: bird.physicsBody.velocity.dy * (bird.physicsBody.velocity.dy < 0 ? 0.003 : 0.001))
+    }
+    
+    func birdPhysicsRotation (min: CGFloat, max: CGFloat, value: CGFloat) -> CGFloat {
+        if value > max { return max }
+        else if value < min { return min }
+        else { return value }
+    }
+    
+    func spawnPipes() {
         var pipePair = SKNode()
         pipePair.position = CGPointMake(self.frame.size.width + pipeTexture1.size().width * 2.0, 0)
         pipePair.zPosition = -10
@@ -110,29 +146,8 @@ class GameScene: SKScene {
         pipe2.physicsBody.dynamic = false
         pipePair.addChild(pipe2)
         
-        var distanceToMove = CGFloat(self.frame.size.width + 2.0 * pipeTexture1.size().width)
-        var movePipes = SKAction.moveByX(-distanceToMove, y: 0.0, duration: NSTimeInterval(0.01 * distanceToMove))
-        pipePair.runAction(movePipes)
+        pipePair.runAction(moveAndRemovePipes)
         
         self.addChild(pipePair)
-    }
-    
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        /* Called when a touch begins */
-        
-        bird.physicsBody.velocity = CGVectorMake(0, 0)
-        bird.physicsBody.applyImpulse(CGVectorMake(0, 8))
-    }
-    
-    func birdPhysicsRotation (min: CGFloat, max: CGFloat, value: CGFloat) -> CGFloat {
-        if value > max { return max }
-        else if value < min { return min }
-        else { return value }
-    }
-   
-    override func update(currentTime: CFTimeInterval) {
-        /* Called before each frame is rendered */
-        
-        bird.zRotation = self.birdPhysicsRotation(-1, max: 0.5, value: bird.physicsBody.velocity.dy * (bird.physicsBody.velocity.dy < 0 ? 0.003 : 0.001))
     }
 }
