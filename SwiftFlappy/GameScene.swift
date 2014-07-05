@@ -56,10 +56,15 @@ class GameScene: SKScene {
         var skylineTexture = SKTexture(imageNamed: "Skyline")
         skylineTexture.filteringMode = SKTextureFilteringMode.Nearest
         
+        var moveSkylineSprite = SKAction.moveByX(-skylineTexture.size().width, y: 0, duration: NSTimeInterval(0.1 * skylineTexture.size().width))
+        var resetSkylineSprite = SKAction.moveByX(skylineTexture.size().width, y: 0, duration: 0.0)
+        var moveSkylineSpritesForever = SKAction.repeatActionForever(SKAction.sequence([moveSkylineSprite, resetSkylineSprite]))
+        
         for var i:CGFloat = 0; i < 2 + self.frame.size.width / (skylineTexture.size().width); ++i {
             var sprite = SKSpriteNode(texture: skylineTexture)
             sprite.zPosition = -20
             sprite.position = CGPointMake(i * sprite.size.width, sprite.size.height / 2 + groundTexture.size().height)
+            sprite.runAction(moveSkylineSpritesForever)
             self.addChild(sprite)
         }
     }
