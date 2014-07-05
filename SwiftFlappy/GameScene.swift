@@ -87,9 +87,19 @@ class GameScene: SKScene {
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         /* Called when a touch begins */
         
+        bird.physicsBody.velocity = CGVectorMake(0, 0)
+        bird.physicsBody.applyImpulse(CGVectorMake(0, 8))
+    }
+    
+    func birdPhysicsRotation (min: CGFloat, max: CGFloat, value: CGFloat) -> CGFloat {
+        if value > max { return max }
+        else if value < min { return min }
+        else { return value }
     }
    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
+        
+        bird.zRotation = self.birdPhysicsRotation(-1, max: 0.5, value: bird.physicsBody.velocity.dy * (bird.physicsBody.velocity.dy < 0 ? 0.003 : 0.001))
     }
 }
