@@ -4,6 +4,7 @@
 //
 //  Created by Reinaldo Haynes on 7/5/14.
 //  Copyright (c) 2014 Reinaldo Haynes. All rights reserved.
+//  Twitter/Facebook/Instagram: @ReyHaynes
 //
 
 import SpriteKit
