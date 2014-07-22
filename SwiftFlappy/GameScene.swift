@@ -232,8 +232,8 @@ class GameScene: SKScene, SKPhysicsContactDelegate {
         pipePair.position = CGPointMake(self.frame.size.width + pipeTexture1.size().width * 2.0, 0)
         pipePair.zPosition = -10
         
-        var height = UInt32(self.frame.height / 3)
-        var y = arc4random() % height
+        var height = UInt(self.frame.height / 3)
+        var y = UInt(arc4random()) % height
         
         var pipe1 = SKSpriteNode(texture: pipeTexture1)
         pipe1.position = CGPointMake(0.0, CGFloat(y))
