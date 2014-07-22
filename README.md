@@ -25,7 +25,7 @@ Step #10 - [Add some physics to Flappy and alter gravity](https://github.com/Rey
 
 Step #11 - [Add touch and rotation physics](https://github.com/ReyHaynes/SwiftFlappy/commit/3f7ca68)
 
-Step #12 - [Adding first enemy pipe!](https://github.com/ReyHaynes/SwiftFlappy/commit/a8142b7)
+Step #12 - [Adding first enemy pipe!](https://github.com/ReyHaynes/SwiftFlappy/commit/a8142b7) (See Bug fix #1)
 
 Step #13 - [Spawning enemy pipes infinitely!](https://github.com/ReyHaynes/SwiftFlappy/commit/a629b3a)
 
@@ -36,6 +36,10 @@ Step #15 - [Reset Game after collision](https://github.com/ReyHaynes/SwiftFlappy
 Step #16 - [Kill the bird](https://github.com/ReyHaynes/SwiftFlappy/commit/0d30e6b)
 
 Step #17 - [Scoring](https://github.com/ReyHaynes/SwiftFlappy/commit/d27638a)
+
+
+
+Bug Fix #1 - [XCode 6 Beta 4 fix. CGFloat Conversion.](https://github.com/ReyHaynes/SwiftFlappy/commit/0ef055e)
 
 
 
